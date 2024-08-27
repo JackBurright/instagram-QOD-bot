@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your description here">
+    <meta name="author" content="Your Name">
+    <title>QOD</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" href="favicon.ico"> <!-- Link to your favicon -->
+
+    <script>
+        function disableSubmitButton() {
+            console.log("freeze button")
+        const submitButton = document.getElementById('submitBtn');
+        submitButton.disabled = true;
+        submitButton.value = 'Uploading...'; // Optional: Change the button text to indicate processing
+    }
+    </script> <!-- Link to your JavaScript file -->
+</head>
+<body>
+
+    <h1>Welcome to the Offical Website of day_of_the_qutoes_</h1>
+
+    <h2>Upload your favorite quote and an image to go with it!</h2>
+    <h3>It will take a little bit to post! Be patient</h3>
+    <form method="POST" enctype="multipart/form-data" onsubmit="disableSubmitButton()">
+        <label for="file">Choose an image to upload:</label>
+        <input type="file" name="file" id="file" accept=".png, .jpeg, .jpg"required>
+        <label for="text">Enter your quote:</label>       
+        <input type="text" name="text" id="text" required><br><br>
+
+        <input type="submit" value="Upload"id ='submitBtn'>
+    </form>
+
+    
+</body>
+</html>
+
