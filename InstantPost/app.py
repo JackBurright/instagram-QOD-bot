@@ -39,6 +39,10 @@ def make_post():
                 uploaded_file.save(file_path)
                 params['save_path'] = file_path
 
+                # Check image rotation and aspect ratio
+                correct_image_orientation(params['save_path'])
+                correct_aspect_ratio(params['save_path'])
+
                 # Handle quote text
                 params['quote'] = request.form.get("text")
                 params['caption'] = f"QOD: {params['quote']} #Quote #QuoteOfTheDay"
@@ -221,15 +225,64 @@ def add_text_to_image(params):
         x_position = (image_width - text_width) // 2  # Center horizontally
 
         # Draw rectangle background
-        draw.rectangle(
-            [(x_position - padding, y_position - padding), (x_position + text_width + padding, y_position + text_height + padding)],
-            fill=background_color
-        )
+        # draw.rectangle(
+        #     [(x_position - padding, y_position - padding), (x_position + text_width + padding, y_position + text_height + padding)],
+        #     fill=background_color
+        # )
         # Draw text on top of the rectangle
         draw.text((x_position, y_position), line, fill=color, font=font)
         y_position += text_height + padding * 2
 
     image.save(params['save_path'])
+
+def correct_image_orientation(image_path):
+    image = Image.open(image_path)
+    exif = image._getexif()
+    print("Was it rotated:")
+    if exif:
+        orientation = exif.get(274)  # 274 is the EXIF tag for orientation
+        if orientation == 3:
+            print("rotated 180")
+            image = image.rotate(180, expand=True)
+        elif orientation == 6:
+            print("rotated 270")
+            image = image.rotate(270, expand=True)
+        elif orientation == 8:
+            print("rotated 90")
+            image = image.rotate(90, expand=True)
+    print("Finished rotating")
+    image.save(image_path)
+
+
+
+def correct_aspect_ratio(image_path):
+    min_aspect_ratio = 3040 / 4032
+    max_aspect_ratio = 1.91 / 1
+
+    image = Image.open(image_path)
+
+    width, height = image.size
+    aspect_ratio = width / height
+
+    if aspect_ratio < min_aspect_ratio:
+        # Add padding to meet the minimum aspect ratio
+        new_height = height
+        new_width = int(height * min_aspect_ratio)
+    elif aspect_ratio > max_aspect_ratio:
+        # Add padding to meet the maximum aspect ratio
+        new_width = width
+        new_height = int(width / max_aspect_ratio)
+    else:
+        # No adjustment needed
+        print("aspect ratio was not changed")
+        return
+    print("aspect ratio was changed from ", aspect_ratio, " to ",new_width/new_height)
+    #Create image with padding to fit ratio
+    new_img = ImageOps.pad(image, (new_width, new_height), color=(0, 0, 0))
+
+    # Save the adjusted image
+    new_img.save(image_path)
+    return
 
 if __name__ == "__main__":
     app.run(debug=True)
