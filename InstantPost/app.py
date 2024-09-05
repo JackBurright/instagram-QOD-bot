@@ -4,7 +4,7 @@ from io import BytesIO
 import time
 import requests
 import json
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv, find_dotenv
 
@@ -46,6 +46,10 @@ def make_post():
                 # Handle quote text
                 params['quote'] = request.form.get("text")
                 params['caption'] = f"QOD: {params['quote']} #Quote #QuoteOfTheDay"
+                params['text_color'] = request.form.get('text-color')
+                params['backdrop_color'] = request.form.get('backdrop-color')
+                params['backdrop'] = request.form.get('backdrop')
+                params['font'] = request.form.get('font')
                 # Add text to the image
                 add_text_to_image(params)
 
