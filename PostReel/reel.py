@@ -1,6 +1,9 @@
 import requests
 import json
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 graph_url = 'https://graph.facebook.com/v20.0/'
 param = dict()
 
@@ -39,9 +42,11 @@ def publish_container(creation_id = '',access_token = '',instagram_account_id=''
     response = response.json()
     return response
 
+inst_id = os.environ['INSTAGRAM_ID']
+access_token = os.environ['INSTA_ACCESS_TOKEN_LONG']
 
-post_reel(media_type='REELS',video_url='',instagram_account_id='')
+print(post_reel(media_type='REELS',video_url='/Users/jackburright/Desktop/code/instagram-QOD-bot/PostReel/polly.mp4',instagram_account_id=inst_id, access_token=access_token))
 
 container = ''
-print(status_of_upload(ig_container_id=container))
-print(publish_container(creation_id=container,access_token='',instagram_account_id=''))
+print(status_of_upload(ig_container_id=container, access_token=access_token))
+print(publish_container(creation_id=container,access_token=access_token,instagram_account_id=inst_id))
